@@ -1,0 +1,41 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.top-navbar header {
+  max-width: 100%;
+}
+
+.app-content {
+  /* full height - (Navbar height + border) */
+  height: calc(100% - (4rem + 1px));
+}
+
+.user-list {
+  width: 20%;
+  border-right: 1px solid #ccc;
+}
+
+.user-list a {
+  width: fit-content;
+  transition: transform 0.3s ease-in-out;
+}
+
+.user-list a:hover {
+  transform: scale(1.1);
+}
+
+#outlet-wrapper {
+  width: 80%;
+  padding: 1rem;
+}
+
+.user-details-sections {
+  width: calc(100% - 250px);
+}

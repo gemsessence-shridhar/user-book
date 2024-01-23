@@ -8,9 +8,9 @@ import {
 } from "@nextui-org/react";
 
 const AppNavigation = () => (
-  <Navbar isBordered>
+  <Navbar isBordered className="top-navbar">
     <NavbarBrand>
-      <p className="font-bold text-inherit">ACME</p>
+      <p className="font-bold text-inherit">UserBook</p>
     </NavbarBrand>
     <NavbarContent className="hidden sm:flex gap-4" justify="center">
       <NavbarItem>
