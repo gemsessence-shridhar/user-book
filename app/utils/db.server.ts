@@ -35,6 +35,6 @@ if (!Firebase?.apps?.length) {
 }
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
 
 export { db };
