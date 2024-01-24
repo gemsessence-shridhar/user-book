@@ -1,5 +1,5 @@
 import { Button, Input, Textarea } from "@nextui-org/react";
-import { Form, redirect, useNavigate } from "@remix-run/react";
+import { Form, useNavigate } from "@remix-run/react";
 import { UserType } from "~/types";
 
 interface UserProps {

@@ -12,7 +12,7 @@ body {
   max-width: 100%;
 }
 
-.app-content {
+.login-container, .app-content {
   /* full height - (Navbar height + border) */
   height: calc(100% - (4rem + 1px));
 }
@@ -25,6 +25,16 @@ body {
 .user-list a {
   width: fit-content;
   transition: transform 0.3s ease-in-out;
+}
+
+.user-list a.active {
+  font-weight: bold;
+  transform: scale(1.1);
+}
+
+.user-list a.pending {
+  animation: progress 2s infinite ease-in-out;
+  animation-delay: 200ms;
 }
 
 .user-list a:hover {
