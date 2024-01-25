@@ -8,3 +8,11 @@ export type UserType = {
   contact: string;
   about: string;
 }
+
+export type PostType = {
+  id: string;
+  title: string;
+  description: string;
+  photo: string;
+  created_at: any;
+}

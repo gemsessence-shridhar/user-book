@@ -12,7 +12,8 @@ const UserForm = ({ user }: UserProps) => {
   return (
     <div className="container mx-auto px-4 w-6/12">
       <p className="font-bold text-2xl mb-4">{`${user.id !== "" ? "Edit" : "New"} User`}</p>
-      <Form method="post" className="flex flex-col gap-4">
+      <Form method="post" className="user-form">
+        <input type="hidden" name="type" value="user" />
         <Input name="first_name" label="First Name" defaultValue={user.first_name} />
         <Input name="last_name" label="Last Name" defaultValue={user.last_name} />
         <Input name="email" type="email" label="Email" defaultValue={user.email} />

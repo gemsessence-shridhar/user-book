@@ -1,12 +1,12 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import UserForm from "~/components/users/UserForm";
 import type { UserType } from "~/types";
-import { db } from "~/utils/db.server";
+import { createUser } from "~/db";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
-  const fieldValues = Object.fromEntries(formData);
-  const userRecord = await db.collection("users").add(fieldValues);
+  const fieldValues: any = Object.fromEntries(formData);
+  const userRecord: any = await createUser(fieldValues);
   return redirect(`/users/${userRecord.id}`);
 } 
 
@@ -16,6 +16,7 @@ const NewUser = () => {
     first_name: "",
     last_name: "",
     email: "",
+    password: "",
     contact: "",
     avatar: "",
     about: ""
