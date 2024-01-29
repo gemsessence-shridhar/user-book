@@ -21,7 +21,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   return await getUser(params.userId);
 }
 
-const EditContact = () => {
+const EditUser = () => {
   const user: UserType = useLoaderData();
 
   return (
@@ -29,4 +29,4 @@ const EditContact = () => {
   )
 }
 
-export default EditContact;
+export default EditUser;

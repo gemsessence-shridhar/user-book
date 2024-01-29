@@ -3,14 +3,10 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { Button, Image } from "@nextui-org/react";
 import PencilIcon from "~/components/icons/PencilIcon";
 import invariant from "tiny-invariant";
-
 import TelephoneIcon from "~/components/icons/TelephoneIcon";
 import EnvelopeIcon from "~/components/icons/EnvelopeIcon";
 import TrashIcon from "~/components/icons/TrashIcon";
-import Post from "~/components/posts/Post";
-import { getUserPosts } from "~/db/posts";
 import { getUser } from "~/db/users";
-import { PostType } from "~/types";
 
 export const loader = async ({
   params
@@ -18,13 +14,11 @@ export const loader = async ({
   invariant(params.userId, "Missing userId param");
   const user = await getUser(params.userId);
   if (!user) throw new Response("Not Found", { status: 404 });
-  const threeLatestPosts = await getUserPosts(params.userId, 3);
-  return { user, posts: threeLatestPosts };
+  return user;
 }
 
 const UserDetails = () => {
-  const { user, posts } = useLoaderData<typeof loader>();
-  console.log(posts);
+  const user = useLoaderData<typeof loader>();
   return (
     <>
       <div className="flex gap-4">
@@ -61,6 +55,12 @@ const UserDetails = () => {
                 <TrashIcon />
               </Button> 
             </Form>
+
+            <Form action="posts">
+              <Button color="warning" aria-label="Show all posts" type="submit" size="sm">
+                Posts
+              </Button>
+            </Form>
           </div>
           
           <div className="flex gap-2">
@@ -77,12 +77,6 @@ const UserDetails = () => {
             <p className="text-base">{user.about}</p>
           </div>
         </section>
-      </div>
-
-      <div className="user-latest-posts">
-        {posts.map((post: PostType) => (
-          <Post key={post.id} post={post} />
-        ))}
       </div>
     </>
   )

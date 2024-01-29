@@ -16,3 +16,8 @@ export type PostType = {
   photo: string;
   created_at: any;
 }
+
+export type CommentType = {
+  id: string;
+  description: string;
+}
