@@ -1,7 +1,7 @@
-import { Button, Image, Input, Switch } from "@nextui-org/react";
-import { ActionFunctionArgs, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Form, Outlet, useActionData, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { Button, Image, Switch, Textarea } from "@nextui-org/react";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { Form, Outlet, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import Comments from "~/components/comments/Comments";
 import PencilIcon from "~/components/icons/PencilIcon";
@@ -14,7 +14,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const commentData: any = Object.fromEntries(formData);
   const commentId = await createComment(params.userId, params.postId, commentData);
-  return commentId;
+  return json({ status: "success", comment: { id: commentId, ...commentData }}) ;
 }
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -27,11 +27,17 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 const PostDetails = () => {
   const [isCommentsSwitchSelected, setCommentsSwitchSelection] = useState(false);
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
   const navigate = useNavigate()
   const post = useLoaderData<typeof loader>();
-  const currentCommentId = useActionData<typeof action>();
-  console.log(currentCommentId);
+  const $form = useRef<HTMLFormElement>(null);
+
+
+  useEffect(function resetCommentFormOnSuccess() {
+    if (fetcher.state === "idle" && fetcher.data?.status === "success") {
+      $form.current?.reset();
+    }
+  }, [fetcher.state, fetcher.data]);
 
   useEffect(() => {
     const urlSegments = getURLPathSegments();
@@ -45,12 +51,10 @@ const PostDetails = () => {
     return url.pathname.split("/");
   }
 
-  const handleViewAllCommentsSwitch = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.checked && event.target.form) {
-      document.getElementById("comments-form-submit-button")?.click();
+  const handleViewAllCommentsSwitch = (isSelected: boolean) => {
+    if (isSelected) {
       setCommentsSwitchSelection(true);
+      document.getElementById("comments-form-submit-button")?.click();
     } else {
       const urlSegments = getURLPathSegments();
       urlSegments.pop(); // Remove the last segment ("comments")
@@ -74,7 +78,6 @@ const PostDetails = () => {
 
       <div className="flex flex-col gap-4">
         <Image
-          isZoomed
           alt={post.title}
           src={post.photo}
           width={400}
@@ -82,14 +85,14 @@ const PostDetails = () => {
         <p>{post.description}</p>
       </div>
 
-      <div className="mb-4">
+      <div className="mt-8">
         <section className="flex gap-4 items-center">
           <p className="font-bold text-2xl mb-2">Comments</p>
           <Form action="comments">
             <button type="submit" id="comments-form-submit-button" />
             <Switch
               isSelected={isCommentsSwitchSelected}
-              onChange={handleViewAllCommentsSwitch}
+              onValueChange={handleViewAllCommentsSwitch}
               size="sm"
             >
               View All Comments
@@ -97,10 +100,9 @@ const PostDetails = () => {
           </Form>
         </section>
 
-        <fetcher.Form method="post" className="flex items-center gap-4">
-          <Input
+        <fetcher.Form method="post" ref={$form} className="flex items-end gap-4 mb-2">
+          <Textarea
             required
-            autoComplete="off"
             name="description"
             placeholder="Write about post..."
             size="sm"
@@ -110,8 +112,8 @@ const PostDetails = () => {
         </fetcher.Form>
       </div>
 
-      {!isCommentsSwitchSelected && currentCommentId && (
-        <Comments comments={[{ id: currentCommentId, description: fetcher.formData?.get("description")?.toString() || "Demo comment" }]} />
+      {!isCommentsSwitchSelected && fetcher.data?.status === "success" && (
+        <Comments comments={[fetcher.data.comment]} />
       )}
 
       <Outlet />

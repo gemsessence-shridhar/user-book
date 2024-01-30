@@ -65,6 +65,32 @@ body {
   max-height: 22rem;
 }
 
+/* Comments CSS */
+.actions-on-comment:hover {
+  background-color: tan;
+}
+
+.actions-on-comment form {
+  display: none;
+}
+
+.actions-on-comment:hover form {
+  display: inline-flex;
+}
+
+.actions-on-comment button {
+  border: none;
+  width: fit-content;
+  min-width: fit-content;
+  height: fit-content;
+  background: transparent;
+  padding: 0;
+}
+
+.actions-on-comment button:hover {
+  transform: scale(1.8);
+}
+
 
 /* Custom Scroll Bar CSS */
 /* scrollbar */

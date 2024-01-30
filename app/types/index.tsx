@@ -1,3 +1,7 @@
+export type MatchAnyField<T> = {
+  [K in keyof T]: any;
+};
+
 export type UserType = {
   id: string;
   first_name: string;
@@ -18,6 +22,9 @@ export type PostType = {
 }
 
 export type CommentType = {
-  id: string;
-  description: string;
+  id?: string;
+  description?: string;
+  liked?: boolean;
+  disliked?: boolean;
+  pinned?: boolean;
 }
