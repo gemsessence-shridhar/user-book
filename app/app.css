@@ -19,7 +19,7 @@ body {
 
 .user-list {
   width: 20%;
-  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
 }
 
 .user-list .users-side-nav {
@@ -53,7 +53,6 @@ body {
 
 #outlet-wrapper {
   width: 80%;
-  padding: 1rem;
   overflow-y: auto;
 }
 

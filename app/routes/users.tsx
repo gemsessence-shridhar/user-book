@@ -5,7 +5,7 @@ import { authenticator } from "~/services/auth.server";
 import { UserType } from "~/types";
 import { getUsers } from "~/db/users";
 
-export const loader = async ({ request }: LoaderFunctionArgs ) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticator.isAuthenticated(request, { failureRedirect: "/login" });
   return await getUsers();
 }
@@ -15,6 +15,10 @@ const Users = () => {
 
   return (
     <div className="app-content flex">
+      <aside id="outlet-wrapper">
+        <Outlet />
+      </aside>
+
       <div className="user-list">
         <section className="border-b p-4">
           <Form action="new">
@@ -29,12 +33,12 @@ const Users = () => {
             <NavLink
               key={user.id}
               to={`${user.id}`}
-              className={({ isActive, isPending }) => 
+              className={({ isActive, isPending }) =>
                 isActive
                   ? "active"
                   : isPending
-                  ? "pending"
-                  : ""
+                    ? "pending"
+                    : ""
               }
             >
               <User
@@ -45,10 +49,6 @@ const Users = () => {
           ))}
         </div>
       </div>
-
-      <aside id="outlet-wrapper">
-        <Outlet />
-      </aside>
     </div>
   )
 }
