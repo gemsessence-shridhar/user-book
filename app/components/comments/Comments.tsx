@@ -1,6 +1,6 @@
 import { Button } from "@nextui-org/react";
 import { CommentType } from "~/types";
-import { PencilIcon, PinAngleIcon, ThumbDownIcon, ThumbUpIcon, TrashIcon } from "../icons";
+import { PencilIcon, PinAngleIcon, RemovePinIcon, ThumbDownIcon, ThumbUpIcon, TrashIcon } from "../icons";
 import { useFetcher } from "@remix-run/react";
 interface CommentProps {
   comments: Array<CommentType>;
@@ -65,20 +65,17 @@ const Comments = ({ comments }: CommentProps) => {
               </Button>
             )}
 
-            {!comment.pinned && (
-              <Button
-                aria-label="Delete the comment"
-                color="danger"
-                isIconOnly
-                name="intent"
-                size="sm"
-                type="submit"
-                value="pin"
-                variant="faded"
-              >
-                <PinAngleIcon />
-              </Button>
-            )}
+            <Button
+              color="danger"
+              isIconOnly
+              name="intent"
+              size="sm"
+              type="submit"
+              value={comment.pinned ? "remove-pin" : "pin"}
+              variant="faded"
+            >
+              {comment.pinned ? <RemovePinIcon /> : <PinAngleIcon />}                
+            </Button>
 
             {/* <Button
               aria-label="Delete the comment"

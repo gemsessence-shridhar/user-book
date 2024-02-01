@@ -25,6 +25,9 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
     case "pin":
       await updateComment(userId, postId, id, { pinned: true });
       break;
+    case "remove-pin":
+      await updateComment(userId, postId, id, { pinned: false });
+      break;
     case "destroy":
       await destroyComment(userId, postId, id);
       break;
