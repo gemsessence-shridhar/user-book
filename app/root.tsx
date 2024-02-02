@@ -42,7 +42,7 @@ export default function App() {
       <body>
         <NextUIProvider className="h-full">
           <AppNavigation isAuthenticated={currentUser !== null} />
-          <Outlet />
+          <Outlet context={{ currentUser }} />
           <ScrollRestoration />
           <Scripts />
           <LiveReload />

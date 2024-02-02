@@ -1,5 +1,6 @@
-import { Outlet, useLocation, useParams } from "@remix-run/react";;
+import { Outlet, useLocation, useOutletContext, useParams } from "@remix-run/react";;
 import { Tab, Tabs } from "@nextui-org/react";
+import { OutletContextType } from "~/types";
 
 const TABS = {
   bio: { key: "bio", name: "Bio" },
@@ -7,6 +8,7 @@ const TABS = {
 }
 
 const UserDetails = () => {
+  const { currentUser } = useOutletContext<OutletContextType>();
   const { pathname } = useLocation();
   const params = useParams();
 
@@ -29,7 +31,7 @@ const UserDetails = () => {
       </Tabs>
 
       <div className="p-4">
-        <Outlet />
+        <Outlet context={{ currentUser }} />
       </div>
     </>
   )

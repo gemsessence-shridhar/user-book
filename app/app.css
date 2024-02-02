@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -12,7 +13,8 @@ body {
   max-width: 100%;
 }
 
-.login-container, .app-content {
+.login-container,
+.app-content {
   /* full height - (Navbar height + border) */
   height: calc(100% - (4rem + 1px));
 }
@@ -47,7 +49,7 @@ body {
   transform: scale(1.1);
 }
 
-.user-form > * {
+.user-form>* {
   margin-bottom: 1rem;
 }
 
@@ -61,7 +63,13 @@ body {
 }
 
 .post-card {
-  max-height: 22rem;
+  max-width: 35rem;
+}
+
+.post-action-btn {
+  background-color: #f0f0f0;
+  border-radius: 3rem;
+  padding: 0.25rem 1.5rem;
 }
 
 /* Comments CSS */

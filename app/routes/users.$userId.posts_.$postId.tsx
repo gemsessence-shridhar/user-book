@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import Comments from "~/components/comments/Comments";
 import PencilIcon from "~/components/icons/PencilIcon";
-import { getUserPost } from "~/db";
+import { getPost } from "~/db";
 import { createComment } from "~/db/comments";
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
@@ -14,7 +14,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const commentData: any = Object.fromEntries(formData);
   const commentId = await createComment(params.userId, params.postId, commentData);
-  return json({ status: "success", comment: { id: commentId, ...commentData }}) ;
+  return json({ status: "success", comment: { id: commentId, ...commentData } });
 }
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -22,7 +22,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const postId = params.postId
   invariant(userId, "Missing userId param");
   invariant(postId, "Missing postId param");
-  return await getUserPost(userId, postId);
+  return await getPost(userId, postId);
 }
 
 const PostDetails = () => {
@@ -71,7 +71,7 @@ const PostDetails = () => {
         <Form action="edit">
           <Button isIconOnly color="primary" aria-label="Edit" type="submit" size="sm">
             <PencilIcon />
-          </Button> 
+          </Button>
         </Form>
       </div>
 
@@ -96,7 +96,7 @@ const PostDetails = () => {
               size="sm"
             >
               View All Comments
-            </Switch>          
+            </Switch>
           </Form>
         </section>
 

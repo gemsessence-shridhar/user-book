@@ -17,6 +17,7 @@ const UserForm = ({ user }: UserProps) => {
         <Input name="first_name" label="First Name" defaultValue={user.first_name} />
         <Input name="last_name" label="Last Name" defaultValue={user.last_name} />
         <Input name="email" type="email" label="Email" defaultValue={user.email} />
+        <Input name="password" type="password" label="Password" defaultValue={user.password} />
         <Input name="contact" label="Contact Number" defaultValue={user.contact} />
         <Input name="avatar" label="Avatar URL" defaultValue={user.avatar} />
         <Textarea

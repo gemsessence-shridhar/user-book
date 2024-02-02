@@ -13,7 +13,7 @@ import { db } from "./db.server";
 import { UserType } from "~/types";
 
 export const login = async (email: string, password: string) => {
-  let users:any = [];
+  let users: any = [];
   const q = query(
     collection(db, "users"),
     where("email", "==", email),
@@ -41,7 +41,7 @@ export const getUsers = async () => {
 export const getUser = async (userId: string) => {
   const docRef = doc(db, "users", userId);
   const docSnap = await getDoc(docRef);
-  return docSnap.data();
+  return { id: userId, ...docSnap.data() } as UserType;
 }
 
 export const createUser = async (userData: UserType) => {

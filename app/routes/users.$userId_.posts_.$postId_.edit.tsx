@@ -4,7 +4,7 @@ import type {
   ActionFunctionArgs,
   LoaderFunctionArgs,
 } from "@remix-run/node";
-import { getUserPost, updateUserPost } from "~/db";
+import { getPost, updatePost } from "~/db";
 import PostForm from "~/components/posts/PostForm";
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
@@ -12,7 +12,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(params.postId, "Missing postId param");
   const formData = await request.formData();
   const postData: any = Object.fromEntries(formData);
-  await updateUserPost(params.userId, params.postId, postData);
+  await updatePost(params.userId, params.postId, postData);
   return redirect(`/users/${params.userId}/posts/${params.postId}`);
 }
 
@@ -20,7 +20,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.userId, "Missing userId param");
   invariant(params.postId, "Missing postId param");
-  const post:any = await getUserPost(params.userId, params.postId);
+  const post: any = await getPost(params.userId, params.postId);
   return post;
 }
 

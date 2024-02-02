@@ -1,8 +1,8 @@
 import { Button, User } from "@nextui-org/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { Form, NavLink, Outlet, useLoaderData, useOutletContext } from "@remix-run/react";
 import { authenticator } from "~/services/auth.server";
-import { UserType } from "~/types";
+import { OutletContextType, UserType } from "~/types";
 import { getUsers } from "~/db/users";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -11,12 +11,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 const Users = () => {
-  const users = useLoaderData<typeof loader>()
+  const { currentUser } = useOutletContext<OutletContextType>();
+  const users = useLoaderData<typeof loader>();
+
+  const moveCurrentUserAtFirstPosition = (allUsers: Array<UserType>) => {
+    const index = allUsers.findIndex((user: UserType) => user.id === currentUser.id);
+    if (index !== -1) {
+      const movedObject = allUsers.splice(index, 1)[0];
+      allUsers.unshift(movedObject);
+    }
+    return allUsers;
+  }
 
   return (
     <div className="app-content flex">
       <aside id="outlet-wrapper">
-        <Outlet />
+        <Outlet context={{ currentUser }} />
       </aside>
 
       <div className="user-list">
@@ -29,7 +39,7 @@ const Users = () => {
         </section>
 
         <div className="users-side-nav gap-2 grid p-4">
-          {users.map((user: UserType) => (
+          {moveCurrentUserAtFirstPosition(users).map((user: UserType) => (
             <NavLink
               key={user.id}
               to={`${user.id}`}
@@ -42,7 +52,7 @@ const Users = () => {
               }
             >
               <User
-                name={`${user.first_name} ${user.last_name}`}
+                name={user.id === currentUser.id ? "Me" : `${user.first_name} ${user.last_name}`}
                 avatarProps={{ src: user.avatar }}
               />
             </NavLink>

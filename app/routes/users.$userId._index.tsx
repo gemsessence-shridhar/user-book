@@ -1,11 +1,13 @@
 import { Button, Image } from "@nextui-org/react";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useOutletContext } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { PencilIcon, TrashIcon } from "~/components/icons";
 import EnvelopeIcon from "~/components/icons/EnvelopeIcon";
 import TelephoneIcon from "~/components/icons/TelephoneIcon";
 import { getUser } from "~/db";
+import { OutletContextType } from "~/types";
+
 
 export const loader = async ({
   params
@@ -17,6 +19,7 @@ export const loader = async ({
 }
 
 const UserBio = () => {
+  const { currentUser } = useOutletContext<OutletContextType>();
   const user = useLoaderData<typeof loader>();
 
   return (
@@ -31,29 +34,33 @@ const UserBio = () => {
         <div className="flex gap-1">
           <p className="text-3xl font-bold mr-4">{`${user.first_name} ${user.last_name}`}</p>
 
-          <Form action="edit">
-            <Button isIconOnly color="primary" aria-label="Edit" type="submit" size="sm">
-              <PencilIcon />
-            </Button>
-          </Form>
+          {currentUser.id === user.id && (
+            <>
+              <Form action="edit">
+                <Button isIconOnly color="primary" aria-label="Edit" type="submit" size="sm">
+                  <PencilIcon />
+                </Button>
+              </Form>
 
-          <Form action="destroy" method="post">
-            <Button
-              isIconOnly
-              color="danger"
-              aria-label="Delete"
-              type="submit"
-              size="sm"
-              onClick={(event) => {
-                const response = confirm("Are you sure to delete this user?");
-                if (!response) {
-                  event.preventDefault();
-                }
-              }}
-            >
-              <TrashIcon />
-            </Button>
-          </Form>
+              <Form action="destroy" method="post">
+                <Button
+                  isIconOnly
+                  color="danger"
+                  aria-label="Delete"
+                  type="submit"
+                  size="sm"
+                  onClick={(event) => {
+                    const response = confirm("Are you sure to delete this user?");
+                    if (!response) {
+                      event.preventDefault();
+                    }
+                  }}
+                >
+                  <TrashIcon />
+                </Button>
+              </Form>
+            </>
+          )}
         </div>
 
         <div className="flex gap-2">
