@@ -25,7 +25,8 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
   if (postId) {
     switch (formData.get("intent")) {
       case "like":
-        await likePost(params.userId, postId);
+        const currentUserId = formData.get("current_user_id")?.toString();
+        if (currentUserId) await likePost(currentUserId, postId);
         break;
       case "unlike":
         const likeId = formData.get("like_id")?.toString();
@@ -54,7 +55,7 @@ const Posts = () => {
   const submit = useSubmit();
   const navigate = useNavigate();
   const { currentUser } = useOutletContext<OutletContextType>();
-  const { userId, posts, postLikes } = useLoaderData<typeof loader>();
+  const { posts, postLikes } = useLoaderData<typeof loader>();
 
   // TODO:: post type should not be "any"
   const handlePostDropdownChange = (key: React.Key, post: any) => {
@@ -136,6 +137,7 @@ const Posts = () => {
             </CardBody>
             <CardFooter>
               <fetcher.Form className="flex gap-2" method="post">
+                <input type="hidden" name="current_user_id" value={currentUser.id} />
                 <input type="hidden" name="post_id" value={post.id} />
                 {currentUserLikedPostIds.includes(post.id) && (
                   <input

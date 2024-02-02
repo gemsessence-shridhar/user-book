@@ -2,7 +2,7 @@ import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 import invariant from "tiny-invariant";
 import PostForm from "~/components/posts/PostForm";
 import { createPost } from "~/db";
-import { BlankPost } from "~/db/blankCollections";
+import { getBlankPost } from "~/db/blankCollections";
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(params.userId, "Missing userId param");
@@ -14,7 +14,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
 const NewPost = () => {
   return (
-    <PostForm post={BlankPost} />
+    <PostForm post={getBlankPost()} />
   )
 }
 
