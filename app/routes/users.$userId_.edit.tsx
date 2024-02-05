@@ -25,7 +25,7 @@ const EditUser = () => {
   const user: UserType = useLoaderData();
 
   return (
-    <UserForm user={user} />
+    <UserForm user={user} formFor="Edit" />
   )
 }
 

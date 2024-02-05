@@ -22,7 +22,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const postId = params.postId
   invariant(userId, "Missing userId param");
   invariant(postId, "Missing postId param");
-  return await getPost(userId, postId);
+  return await getPost(postId);
 }
 
 const PostDetails = () => {

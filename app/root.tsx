@@ -41,7 +41,7 @@ export default function App() {
       </head>
       <body>
         <NextUIProvider className="h-full">
-          <AppNavigation isAuthenticated={currentUser !== null} />
+          <AppNavigation currentUser={currentUser} />
           <Outlet context={{ currentUser }} />
           <ScrollRestoration />
           <Scripts />

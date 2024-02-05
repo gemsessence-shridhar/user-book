@@ -30,14 +30,6 @@ const Users = () => {
       </aside>
 
       <div className="user-list">
-        <section className="border-b p-4">
-          <Form action="new">
-            <Button type="submit" color="primary" size="sm" className="font-bold">
-              + New
-            </Button>
-          </Form>
-        </section>
-
         <div className="users-side-nav gap-2 grid p-4">
           {moveCurrentUserAtFirstPosition(users).map((user: UserType) => (
             <NavLink

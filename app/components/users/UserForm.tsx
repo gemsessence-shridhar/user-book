@@ -4,28 +4,24 @@ import { UserType } from "~/types";
 
 interface UserProps {
   user: UserType;
+  formFor?: "New" | "Edit"
 }
 
-const UserForm = ({ user }: UserProps) => {
+const UserForm = ({ user, formFor = "New" }: UserProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto px-4 w-6/12">
-      <p className="font-bold text-2xl mb-4">{`${user.id !== "" ? "Edit" : "New"} User`}</p>
+    <div className="container mx-auto px-4 w-6/12 mt-4">
+      <p className="font-bold text-2xl mb-4">{`${formFor} User`}</p>
       <Form method="post" className="user-form">
         <input type="hidden" name="type" value="user" />
         <Input name="first_name" label="First Name" defaultValue={user.first_name} />
         <Input name="last_name" label="Last Name" defaultValue={user.last_name} />
-        <Input name="email" type="email" label="Email" defaultValue={user.email} />
-        <Input name="password" type="password" label="Password" defaultValue={user.password} />
+        <Input name="email" type="email" label="Email" defaultValue={user.email} autoComplete="off" />
+        <Input name="password" type="password" label="Password" defaultValue={user.password} autoComplete="off" />
         <Input name="contact" label="Contact Number" defaultValue={user.contact} />
         <Input name="avatar" label="Avatar URL" defaultValue={user.avatar} />
-        <Textarea
-          name="about"
-          label="About"
-          className="max-w-xs"
-          defaultValue={user.about}
-        />
+        <Textarea name="about" label="About" defaultValue={user.about} />
 
         <span>
           <Button

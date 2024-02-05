@@ -11,19 +11,18 @@ const PostForm = ({ post }: PostFormProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto px-4 w-6/12">
-      <p className="font-bold text-2xl mb-4">{`${post.id !== "" ? "Edit" : "New"} Post`}</p>
+    <div className="container mx-auto px-4 w-6/12 mt-4">
+      <p className="font-bold text-2xl mb-4">{`${post.user_id === "" ? "New" : "Edit"} Post`}</p>
       <Form method="post" className="user-form">
         <input
           type="hidden"
           name="created_at"
-          value={post.created_at || moment.now()}
+          value={post.created_at}
         />
         <Input name="title" label="Title" defaultValue={post.title} />
         <Textarea
           name="description"
           label="Description"
-          className="max-w-xs"
           defaultValue={post.description}
         />
         <Input name="photo" label="Photo URL" defaultValue={post.photo} />

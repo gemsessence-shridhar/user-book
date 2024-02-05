@@ -66,10 +66,15 @@ body {
   max-width: 35rem;
 }
 
+.post-action-form {
+  width: 100%;
+}
+
 .post-action-btn {
+  min-width: 6rem;
   background-color: #f0f0f0;
   border-radius: 3rem;
-  padding: 0.25rem 1.5rem;
+  padding: 0.5rem 1.5rem;
 }
 
 /* Comments CSS */

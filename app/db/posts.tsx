@@ -8,10 +8,11 @@ import {
   orderBy,
   query,
   setDoc,
-} from "firebase/firestore"
-import { db } from "./db.server"
-import { getBlankPost, getBlankPostLike } from "./blankCollections";
-import { PostLikeType, PostType } from "~/types";
+  where,
+} from "firebase/firestore";
+import { db } from "./db.server";
+import { getBlankComment, getBlankPost, getBlankPostLike } from "./blankCollections";
+import { PostCommentType, PostLikeType, PostType } from "~/types";
 
 
 export const createPost = async (
@@ -19,44 +20,47 @@ export const createPost = async (
   postData: Pick<PostType, 'title' | 'description' | 'photo'>,
 ) => {
   const post: PostType = { ...getBlankPost(), ...postData, user_id: userId }
-  const docRef = doc(db, `users/${userId}/posts`, post.id);
-  await setDoc(docRef, post);
+  await setDoc(doc(db, `posts`, post.id), post);
 }
 
 export const updatePost = async (
-  userId: string,
   postId: string,
   updatedData: Pick<PostType, 'title' | 'description' | 'photo'>,
 ) => {
-  const post = await getPost(userId, postId);
-  const docRef = doc(db, `users/${userId}/posts/${postId}`);
-  await setDoc(docRef, { ...post, updatedData });
+  const post = await getPost(postId);
+  await setDoc(doc(db, `posts/${postId}`), { ...post, ...updatedData });
 }
 
-export const getPost = async (userId: string, postId: string) => {
-  const docRef = doc(db, `users/${userId}/posts/${postId}`);
-  const postSnap = await getDoc(docRef);
+export const getPost = async (postId: string) => {
+  const postSnap = await getDoc(doc(db, `posts/${postId}`));
   return postSnap.data() as PostType;
 }
 
-export const getPosts = async (userId: string, limit?: number) => {
+// we will implement infinite scroll with pagination
+export const getPosts = async (userId?: string, limit?: number) => {
   let posts: Array<PostType> = [];
-  const q = query(
-    collection(db, `users/${userId}/posts`),
-    orderBy("created_at", "desc"),
-    endAt(limit || 10000)
-  );
-  const querySnapshots = await getDocs(q);
+  const postsCollection = collection(db, `posts`);
+  let postsQuery = query(postsCollection);
+  if (userId) {
+    postsQuery = query(postsQuery, where("user_id", "==", userId))
+  }
+  if (limit) {
+    postsQuery = query(postsQuery, endAt(limit));
+  }
+  postsQuery = query(postsQuery, orderBy("created_at", "desc"))
+
+  const querySnapshots = await getDocs(postsQuery);
   querySnapshots.forEach((doc) => {
     posts.push({ ...getBlankPost(), id: doc.id, ...doc.data() });
   });
   return posts;
 }
 
-export const destroyPost = async (userId: string, postId: string) => {
-  const docRef = doc(db, `users/${userId}/posts/${postId}`);
-  await deleteDoc(docRef);
+export const destroyPost = async (postId: string) => {
+  await deleteDoc(doc(db, `posts/${postId}`));
 }
+
+// post > likes
 
 export const likePost = async (userId: string, postId: string) => {
   const likeData: PostLikeType = { ...getBlankPostLike(), post_id: postId, user_id: userId };
@@ -75,4 +79,26 @@ export const getPostLikes = async () => {
     likes.push({ ...getBlankPostLike(), id: doc.id, ...doc.data() });
   });
   return likes;
+}
+
+// post > comments
+
+export const commentForAPost = async (userId: string, postId: string, description: string) => {
+  const commentData: PostCommentType = {
+    ...getBlankComment(),
+    description,
+    post_id: postId,
+    user_id: userId,
+  };
+  await setDoc(doc(db, 'post_comments', commentData.id), commentData);
+  return commentData.id;
+}
+
+export const getComments = async () => {
+  let comments: Array<PostCommentType> = [];
+  const querySnapshots = await getDocs(collection(db, `post_comments`));
+  querySnapshots.forEach((doc) => {
+    comments.push({ ...getBlankComment(), id: doc.id, ...doc.data() });
+  });
+  return comments;
 }

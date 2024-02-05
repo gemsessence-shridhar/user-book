@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./db.server";
 import { UserType } from "~/types";
+import { getBlankUser } from "./blankCollections";
 
 export const login = async (email: string, password: string) => {
   let users: any = [];
@@ -39,17 +40,26 @@ export const getUsers = async () => {
 }
 
 export const getUser = async (userId: string) => {
-  const docRef = doc(db, "users", userId);
-  const docSnap = await getDoc(docRef);
-  return { id: userId, ...docSnap.data() } as UserType;
+  const docSnap = await getDoc(doc(db, "users", userId));
+  return docSnap.data() as UserType;
 }
 
-export const createUser = async (userData: UserType) => {
-  return await addDoc(collection(db, "users"), { ...userData });
+type UserDataType = Pick<UserType, "first_name"
+  | "last_name"
+  | "email"
+  | "password"
+  | "contact"
+  | "about"
+  | "avatar"
+>
+export const createUser = async (userData: UserDataType) => {
+  const newUserData = { ...getBlankUser(), ...userData };
+  await setDoc(doc(db, "users", newUserData.id), newUserData);
 }
 
 export const updateUser = async (userId: string, userData: UserType) => {
-  await setDoc(doc(db, "users", userId), userData);
+  const user = await getUser(userId);
+  await setDoc(doc(db, "users", userId), { ...user, ...userData });
 }
 
 export const destroyUser = async (userId: string) => {

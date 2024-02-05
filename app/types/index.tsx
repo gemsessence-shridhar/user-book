@@ -8,7 +8,7 @@ export type OutletContextType = {
 
 // users
 export type UserType = {
-  id?: string; // auto-generated
+  id: string; // auto-generated
   first_name: string;
   last_name: string;
   email: string;
@@ -16,6 +16,7 @@ export type UserType = {
   avatar: string;
   contact: string;
   about: string;
+  created_at: Date;
 }
 
 // users > posts
@@ -37,7 +38,7 @@ export type PostLikeType = {
 
 // post_comments
 export type PostCommentType = {
-  id?: string; // auto-generated
+  id: string; // auto-generated
   post_id: string;
   user_id: string;
   description: string;
