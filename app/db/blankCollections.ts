@@ -10,7 +10,7 @@ export const getBlankUser = (): UserType => ({
   contact: "",
   about: "",
   avatar: "",
-  created_at: new Date(),
+  created_at: new Date().toString(),
 })
 
 export const getBlankPost = (): PostType => ({
@@ -19,7 +19,7 @@ export const getBlankPost = (): PostType => ({
   title: "",
   description: "",
   photo: "",
-  created_at: new Date(),
+  created_at: new Date().toString(),
 })
 
 export const getBlankPostLike = (): PostLikeType => ({
@@ -30,8 +30,8 @@ export const getBlankPostLike = (): PostLikeType => ({
 
 export const getBlankComment = (): PostCommentType => ({
   id: uuidv4(),
-  commented_at: new Date(),
-  description: "",
   post_id: "",
   user_id: "",
+  description: "",
+  commented_at: new Date().toString(),
 })

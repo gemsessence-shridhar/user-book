@@ -1,14 +1,16 @@
 import { useNavigate, useOutletContext, useSubmit } from "@remix-run/react";
-import { OutletContextType, PostCommentType, PostLikeType, PostType } from "~/types";
+import { OutletContextType, PostCommentType, PostLikeType, PostType, UserType } from "~/types";
 import Post from "./Post";
 
 interface PostListProps {
+  users: Array<UserType>;
   posts: Array<PostType>;
   postLikes: Array<PostLikeType>;
   comments: Array<PostCommentType>;
 }
 
 const PostList = ({
+  users,
   posts,
   postLikes,
   comments,
@@ -40,9 +42,8 @@ const PostList = ({
   }
 
   return (
-    <div className="gap-4 grid justify-center" >
-      {/* TODO:: post type should not be "any" */}
-      {posts.map((post: any) => (
+    <div className="gap-4 grid justify-center">
+      {posts.map((post: PostType) => (
         <Post
           key={post.id}
           currentUserId={currentUser.id}
@@ -51,6 +52,7 @@ const PostList = ({
           overAllLikesCountForPost={getLikesCount(post.id)}
           post={post}
           comments={getCommentsForPost(post.id)}
+          users={users}
         />
       ))}
     </div >

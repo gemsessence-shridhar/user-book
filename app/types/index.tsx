@@ -16,7 +16,7 @@ export type UserType = {
   avatar: string;
   contact: string;
   about: string;
-  created_at: Date;
+  created_at: string;
 }
 
 // users > posts
@@ -26,7 +26,7 @@ export type PostType = {
   title: string;
   description: string;
   photo: string;
-  created_at: Date;
+  created_at: string;
 }
 
 // post_likes
@@ -42,13 +42,6 @@ export type PostCommentType = {
   post_id: string;
   user_id: string;
   description: string;
-  commented_at: Date;
+  commented_at: string;
 }
 
-export type CommentType = {
-  id?: string;
-  description?: string;
-  liked?: boolean;
-  disliked?: boolean;
-  pinned?: boolean;
-}

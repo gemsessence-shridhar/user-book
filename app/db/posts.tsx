@@ -9,6 +9,7 @@ import {
   query,
   setDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "./db.server";
 import { getBlankComment, getBlankPost, getBlankPostLike } from "./blankCollections";
@@ -57,6 +58,8 @@ export const getPosts = async (userId?: string, limit?: number) => {
 }
 
 export const destroyPost = async (postId: string) => {
+  await destroyPostLikes(postId);
+  await destroyAllComments(postId);
   await deleteDoc(doc(db, `posts/${postId}`));
 }
 
@@ -81,6 +84,14 @@ export const getPostLikes = async () => {
   return likes;
 }
 
+export const destroyPostLikes = async (postId: string) => {
+  const batch = writeBatch(db);
+  let likeQuery = query(collection(db, "post_likes"), where("post_id", "==", postId));
+  const likesSnapshots = await getDocs(likeQuery);
+  likesSnapshots.forEach((doc) => { batch.delete(doc.ref) });
+  await batch.commit();
+}
+
 // post > comments
 
 export const commentForAPost = async (userId: string, postId: string, description: string) => {
@@ -94,11 +105,29 @@ export const commentForAPost = async (userId: string, postId: string, descriptio
   return commentData.id;
 }
 
-export const getComments = async () => {
+const getCommentsSnapshots = async (postId?: string, userId?: string) => {
+  let commentsQuery = query(collection(db, `post_comments`));
+  if (postId) {
+    commentsQuery = query(commentsQuery, where("post_id", "==", postId));
+  }
+  if (userId) {
+    commentsQuery = query(commentsQuery, where("user_id", "==", userId));
+  }
+  return await getDocs(commentsQuery);
+}
+
+export const getComments = async (postId?: string, userId?: string) => {
   let comments: Array<PostCommentType> = [];
-  const querySnapshots = await getDocs(collection(db, `post_comments`));
-  querySnapshots.forEach((doc) => {
+  const commentsSnapshots = await getCommentsSnapshots(postId, userId);
+  commentsSnapshots.forEach((doc) => {
     comments.push({ ...getBlankComment(), id: doc.id, ...doc.data() });
   });
   return comments;
+}
+
+export const destroyAllComments = async (postId: string) => {
+  const batch = writeBatch(db);
+  const commentsSnapshots = await getCommentsSnapshots(postId);
+  commentsSnapshots.forEach((doc) => { batch.delete(doc.ref) });
+  await batch.commit();
 }

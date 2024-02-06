@@ -5,45 +5,65 @@ import {
   NavbarItem,
   Link,
   Button,
+  User,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 import { Form, NavLink } from "@remix-run/react";
 import { UserType } from "~/types";
+import { LogoutIcon } from "../icons";
 
 interface AppNavigationProps {
-  currentUser?: UserType;
+  currentUser: UserType | null;
 }
 
 const AppNavigation = ({ currentUser }: AppNavigationProps) => {
   return (
     <Navbar isBordered className="top-navbar">
       <NavbarBrand>
-        <p className="font-bold text-inherit">Friends Book</p>
+        <NavLink to="/">
+          <p className="font-bold text-inherit">Friends Book</p>
+        </NavLink>
       </NavbarBrand>
 
       {currentUser && (
         <>
           <NavbarContent justify="center">
-            <NavbarItem>
-              <NavLink to={`/users/${currentUser.id}`}>Profile</NavLink>
+            <NavbarItem className="app-nav-item">
+              <NavLink to="/" end>Home</NavLink>
             </NavbarItem>
 
-            <NavbarItem>
-              <NavLink to="/users">Users</NavLink>
+            <NavbarItem className="app-nav-item">
+              <NavLink to={`/users/${currentUser.id}`} end>Profile</NavLink>
             </NavbarItem>
 
-            <NavbarItem>
-              <Form action="logout" method="post">
-                <Button type="submit" as={NavLink}>
-                  Logout
-                </Button>
-              </Form>
+            <NavbarItem className="app-nav-item">
+              <NavLink to={`/users/${currentUser.id}/posts`} end>Posts</NavLink>
             </NavbarItem>
           </NavbarContent>
 
           <NavbarContent justify="end">
-            <span className="font-bold text-xl">
-              {`${currentUser.first_name} ${currentUser.last_name}`}
-            </span>
+            <Dropdown>
+              <DropdownTrigger>
+                <User
+                  name={`${currentUser.first_name} ${currentUser.last_name}`}
+                  avatarProps={{ src: currentUser.avatar }}
+                  classNames={{ base: "cursor-pointer", name: "font-bold text-amber-700" }}
+                />
+              </DropdownTrigger>
+
+              <DropdownMenu variant="shadow">
+                <DropdownItem key="edit" startContent={<LogoutIcon />}>
+                  <Form action="/logout" method="post">
+                    <button className="navbar-button" type="submit">
+                      Logout
+                    </button>
+                  </Form>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </NavbarContent>
         </>
       )}

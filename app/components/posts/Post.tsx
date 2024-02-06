@@ -10,11 +10,13 @@ import {
   DropdownTrigger,
   Image,
   Input,
+  User,
 } from "@nextui-org/react";
 import { ChatIcon, ChevronDownIcon, PencilIcon, ThumbUpIcon, TrashIcon } from "../icons";
 import { useFetcher } from "@remix-run/react";
-import { PostCommentType, PostLikeType, PostType } from "~/types";
+import { PostCommentType, PostLikeType, PostType, UserType } from "~/types";
 import { Key, useEffect, useState } from "react";
+import moment from "moment";
 
 interface PostProps {
   currentUserId: string;
@@ -23,6 +25,7 @@ interface PostProps {
   overAllLikesCountForPost: number;
   post: PostType;
   comments: Array<PostCommentType>;
+  users: Array<UserType>;
 }
 
 const Post = ({
@@ -32,6 +35,7 @@ const Post = ({
   overAllLikesCountForPost,
   post,
   comments,
+  users,
 }: PostProps) => {
   const [isCommentVisible, setIsCommentVisible] = useState(false);
   const [comment, setComment] = useState("");
@@ -49,15 +53,19 @@ const Post = ({
     if (hasSubmittedComment) setComment("");
   }, [fetcher.state]);
 
+  const getUser = (userId: string) => users.find(user => user.id === userId);
+  const postUser = getUser(post.user_id);
+
   return (
     <Card radius="none" className="post-card pt-2">
       <CardHeader className="pb-0 pt-2 px-4 flex-row justify-between items-center">
-        <section>
-          <p className="text-tiny uppercase font-bold">{post.title}</p>
-          {/* <p className="text-xs">{}</p> */}
-        </section>
+        <User
+          name={`${postUser?.first_name} ${postUser?.last_name}`}
+          description={moment(new Date(post.created_at)).fromNow()}
+          avatarProps={{ src: postUser?.avatar }}
+        />
 
-        <section>
+        {post.user_id === currentUserId && (
           <Dropdown>
             <DropdownTrigger>
               <Button variant="light" className="min-w-4 h-4 p-0">
@@ -81,19 +89,26 @@ const Post = ({
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-        </section>
+        )}
       </CardHeader>
 
-      <CardBody className="py-2">
-        <Image
-          alt="Image"
-          className="object-cover rounded"
-          src={post.photo}
-        />
-        <p className="mt-2">{post.description}</p>
+      <CardBody className="flex flex-col gap-2 py-2 px-6">
+        {post.title !== "" && (
+          <p className="font-bold">{post.title}</p>
+        )}
+        {post.description !== "" && (
+          <p className="text-sm text-justify">{post.description}</p>
+        )}
+        {post.photo !== "" && (
+          <Image
+            alt="Image"
+            className="object-cover rounded"
+            src={post.photo}
+          />
+        )}
       </CardBody>
 
-      <CardFooter>
+      <CardFooter className="px-6">
         <fetcher.Form method="post" className="post-action-form">
           <div className="flex gap-2">
             <button
@@ -131,7 +146,7 @@ const Post = ({
           )}
 
           {isCommentVisible && (
-            <div className="comments flex flex-col gap-2 pb-4">
+            <div className="comments flex flex-col gap-2 pb-4 mt-4">
               <section className="flex justify-between items-end gap-4">
                 <Input
                   required
@@ -156,18 +171,31 @@ const Post = ({
                 </Button>
               </section>
 
-              {comments.map(comment => (
-                <section className="comments-list">
-                  <div>
-                    <p>{comment.description}</p>
-                  </div>
-                </section>
-              ))}
+              {comments.map(comment => {
+                const commentUser = getUser(comment.user_id);
+                return (
+                  <section className="comments-list" key={comment.id}>
+                    <div className="flex flex-col mt-2">
+                      <User
+                        name={`${commentUser?.first_name} ${commentUser?.last_name}`}
+                        description={moment(new Date(comment.commented_at)).fromNow()}
+                        avatarProps={{ src: commentUser?.avatar }}
+                        classNames={{ base: "justify-start", name: "font-bold" }}
+                      />
+                      <section className="pl-10">
+                        <span className="text-sm bg-[#f0f0f0] p-2 rounded-full">
+                          {comment.description}
+                        </span>
+                      </section>
+                    </div>
+                  </section>
+                )
+              })}
             </div>
           )}
         </fetcher.Form>
       </CardFooter>
-    </Card>
+    </Card >
   )
 }
 
