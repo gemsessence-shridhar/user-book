@@ -37,20 +37,22 @@ export const getPost = async (postId: string) => {
   return postSnap.data() as PostType;
 }
 
+export const getPostsSnapshots = async (userId?: string, limit?: number) => {
+  let postsQuery = query(collection(db, `posts`));
+
+  if (userId)
+    postsQuery = query(postsQuery, where("user_id", "==", userId))
+  if (limit)
+    postsQuery = query(postsQuery, endAt(limit));
+
+  postsQuery = query(postsQuery, orderBy("created_at", "desc"))
+  return await getDocs(postsQuery);
+}
+
 // we will implement infinite scroll with pagination
 export const getPosts = async (userId?: string, limit?: number) => {
   let posts: Array<PostType> = [];
-  const postsCollection = collection(db, `posts`);
-  let postsQuery = query(postsCollection);
-  if (userId) {
-    postsQuery = query(postsQuery, where("user_id", "==", userId))
-  }
-  if (limit) {
-    postsQuery = query(postsQuery, endAt(limit));
-  }
-  postsQuery = query(postsQuery, orderBy("created_at", "desc"))
-
-  const querySnapshots = await getDocs(postsQuery);
+  const querySnapshots = await getPostsSnapshots(userId, limit);
   querySnapshots.forEach((doc) => {
     posts.push({ ...getBlankPost(), id: doc.id, ...doc.data() });
   });
@@ -75,9 +77,19 @@ export const unlikePost = async (likeId: string) => {
   await deleteDoc(docRef);
 }
 
+export const getPostLikesSnapshots = async (userId?: string, postId?: string) => {
+  let likesQuery = query(collection(db, `post_likes`));
+  if (userId)
+    likesQuery = query(likesQuery, where("user_id", "==", userId));
+  if (postId)
+    likesQuery = query(likesQuery, where("post_id", "==", postId));
+
+  return await getDocs(likesQuery);
+}
+
 export const getPostLikes = async () => {
   let likes: Array<PostLikeType> = [];
-  const querySnapshots = await getDocs(collection(db, `post_likes`));
+  const querySnapshots = await getPostLikesSnapshots();
   querySnapshots.forEach((doc) => {
     likes.push({ ...getBlankPostLike(), id: doc.id, ...doc.data() });
   });
@@ -105,7 +117,7 @@ export const commentForAPost = async (userId: string, postId: string, descriptio
   return commentData.id;
 }
 
-const getCommentsSnapshots = async (postId?: string, userId?: string) => {
+export const getCommentsSnapshots = async (postId?: string, userId?: string) => {
   let commentsQuery = query(collection(db, `post_comments`));
   if (postId) {
     commentsQuery = query(commentsQuery, where("post_id", "==", postId));

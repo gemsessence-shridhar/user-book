@@ -13,13 +13,25 @@ const PostForm = ({ post }: PostFormProps) => {
     <div className="container mx-auto px-4 w-6/12 mt-4">
       <p className="font-bold text-2xl mb-4">{`${post.user_id === "" ? "New" : "Edit"} Post`}</p>
       <Form method="post" className="user-form">
-        <Input name="title" label="Title" defaultValue={post.title} />
+        <Input
+          autoFocus
+          isRequired
+          name="title"
+          label="Title"
+          defaultValue={post.title}
+        />
+
         <Textarea
           name="description"
           label="Description"
           defaultValue={post.description}
         />
-        <Input name="photo" label="Photo URL" defaultValue={post.photo} />
+
+        <Input
+          name="photo"
+          label="Photo URL"
+          defaultValue={post.photo}
+        />
 
         <span>
           <Button

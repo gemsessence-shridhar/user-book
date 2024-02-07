@@ -1,5 +1,5 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -23,8 +23,17 @@ import { authenticator } from "./services/auth.server";
 import stylesheet from "./tailwind.css";
 import nProgressStyles from "nprogress/nprogress.css";
 import styles from "./app.css";
+import { UserType } from "./types";
 
 NProgress.configure({ showSpinner: false });
+
+const filterUsersByName = (users: Array<UserType>, searchTerm: string) => {
+  const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  return users.filter(user =>
+    user.first_name.toLowerCase().indexOf(lowerCaseSearchTerm) !== -1 ||
+    user.last_name.toLowerCase().indexOf(lowerCaseSearchTerm) !== -1
+  );
+}
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [
@@ -39,7 +48,8 @@ export const links: LinksFunction = () => [
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   let currentUser;
-  let users = [];
+  let users: Array<UserType> = [];
+  let searchTerm: string | null = null;
 
   if (!["/login", "/signup"].includes(url.pathname)) {
     currentUser = await authenticator.isAuthenticated(request, {
@@ -49,15 +59,18 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   if (currentUser) {
     users = await getUsers();
+    searchTerm = url.searchParams.get("search");
+    if (searchTerm && searchTerm !== "")
+      users = filterUsersByName(users, searchTerm);
   }
 
-  return { currentUser, users };
+  return { currentUser, users, searchTerm };
 }
 
 export default function App() {
   const navigation = useNavigation();
   let fetchers = useFetchers();
-  const { currentUser, users } = useLoaderData<typeof loader>();
+  const { currentUser, users, searchTerm } = useLoaderData<typeof loader>();
 
   useEffect(() => {
     const fetchersIdle = fetchers.every((f) => f.state === 'idle');
@@ -67,6 +80,13 @@ export default function App() {
       NProgress.start();
     }
   }, [navigation.state, fetchers]);
+
+  useEffect(() => {
+    const searchInput = document.getElementById("search-user-input");
+    if (searchInput instanceof HTMLInputElement) {
+      searchInput.value = searchTerm || "";
+    }
+  }, [searchTerm]);
 
   return (
     <html lang="en">
@@ -86,7 +106,11 @@ export default function App() {
                 <Outlet context={{ currentUser }} />
               </aside>
 
-              <UserList currentUser={currentUser} users={users} />
+              <UserList
+                currentUser={currentUser}
+                users={users}
+                searchTerm={searchTerm}
+              />
             </div>
           ) : (
             <Outlet />

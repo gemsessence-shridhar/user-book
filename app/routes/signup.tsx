@@ -5,27 +5,24 @@ import { createUser } from "~/db";
 import { getBlankUser } from "~/db/blankCollections";
 import { authenticator } from "~/services/auth.server";
 import { UserType } from "~/types";
+import { validateUser } from "~/utils/userFormValidationUtils";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
-  const fieldValues = Object.fromEntries(formData) as UserType;
+  const newUser = Object.fromEntries(formData) as UserType;
 
-  let errors: Partial<UserType> = {};
-  if (fieldValues.first_name === "") {
-    errors.first_name = "First name can't be blank"
+  const errors = validateUser(newUser)
+  if (Object.keys(errors).length > 0) {
+    return errors;
+  } else {
+    await createUser(newUser);
+    return redirect("/");
+    // TODO:: Check if user creation is successful
+    // return await authenticator.authenticate("user-pass", request, {
+    //   successRedirect: "/",
+    //   failureRedirect: "/signup",
+    // });
   }
-
-  return errors;
-
-  // await createUser(fieldValues);
-
-  // TODO:: Check if user creation is successful
-  // return await authenticator.authenticate("user-pass", request, {
-  //   successRedirect: "/",
-  //   failureRedirect: "/signup",
-  // });
-
-  // return redirect("/");
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

@@ -5,17 +5,16 @@ const VALID_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_CONTACT_NUMBER_REGEX = /^(?:\+91|0)?[6-9]\d{9}$/;
 const VALID_URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,})([/\w.-]*)*\/?$/i;
 
-export const validateUser = (formEntries: Partial<UserType>): Partial<UserType> => {
-  let errors: Partial<UserType> = {};
-
+type PartialUserType = Partial<UserType>;
+export const validateUser = (formEntries: PartialUserType): PartialUserType => {
+  let errors: PartialUserType = {};
   errors.first_name = validateName(formEntries.first_name);
   errors.last_name = validateName(formEntries.last_name);
   errors.email = validateEmail(formEntries.email);
   errors.password = validatePassword(formEntries.password);
   errors.contact = validateContact(formEntries.contact);
   errors.avatar = validateAvatar(formEntries.avatar);
-
-  return errors;
+  return filterColumnsWithError(errors)
 }
 
 // Used for both first_name and last_name
@@ -43,4 +42,13 @@ const validateContact = (contact: string | undefined) => {
 const validateAvatar = (avatar: string | undefined) => {
   if (!avatar || avatar.length === 0) return "can't be blank";
   if (!VALID_URL_REGEX.test(avatar)) return "must be a valid URL";
+}
+
+const filterColumnsWithError = (errors: PartialUserType): PartialUserType => {
+  const columnsWithError = Object.keys(errors).filter(key => errors[key] !== undefined);
+  const filteredErrors: PartialUserType = {};
+  columnsWithError.forEach(key => {
+    filteredErrors[key as keyof UserType] = errors[key];
+  });
+  return filteredErrors;
 }

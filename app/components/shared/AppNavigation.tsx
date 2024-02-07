@@ -16,7 +16,7 @@ import { UserType } from "~/types";
 import { LogoutIcon } from "../icons";
 
 interface AppNavigationProps {
-  currentUser: UserType | null;
+  currentUser?: UserType;
 }
 
 const AppNavigation = ({ currentUser }: AppNavigationProps) => {
@@ -55,9 +55,9 @@ const AppNavigation = ({ currentUser }: AppNavigationProps) => {
               </DropdownTrigger>
 
               <DropdownMenu variant="shadow">
-                <DropdownItem key="edit" startContent={<LogoutIcon />}>
+                <DropdownItem key="logout" startContent={<LogoutIcon />}>
                   <Form action="/logout" method="post">
-                    <button className="navbar-button" type="submit">
+                    <button className="navbar-button w-full text-left" type="submit">
                       Logout
                     </button>
                   </Form>

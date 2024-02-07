@@ -4,6 +4,7 @@ import LogoutIcon from "./LogoutIcon";
 import PencilIcon from "./PencilIcon";
 import PinAngleIcon from "./PinAngleIcon";
 import RemovePinIcon from "./RemovePinIcon";
+import SearchIcon from "./SearchIcon";
 import ThumbDownIcon from "./ThumbDownIcon";
 import ThumbUpIcon from "./ThumbUpIcon";
 import TrashIcon from "./TrashIcon";
@@ -15,6 +16,7 @@ export {
   PencilIcon,
   PinAngleIcon,
   RemovePinIcon,
+  SearchIcon,
   ThumbDownIcon,
   ThumbUpIcon,
   TrashIcon,

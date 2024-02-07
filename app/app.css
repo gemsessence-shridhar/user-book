@@ -35,22 +35,22 @@ body {
   overflow-y: auto;
 }
 
-.user-list a {
+.users-side-nav a {
   width: fit-content;
   transition: transform 0.3s ease-in-out;
 }
 
-.user-list a.active {
+.users-side-nav a.active {
   font-weight: bold;
   transform: scale(1.1);
 }
 
-.user-list a.pending {
+.users-side-nav a.pending {
   animation: progress 2s infinite ease-in-out;
   animation-delay: 200ms;
 }
 
-.user-list a:hover {
+.users-side-nav a:hover {
   transform: scale(1.1);
 }
 

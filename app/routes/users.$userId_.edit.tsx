@@ -7,13 +7,20 @@ import type {
 import UserForm from "~/components/users/UserForm";
 import type { UserType } from "~/types";
 import { getUser, updateUser } from "~/db";
+import { validateUser } from "~/utils/userFormValidationUtils";
 
 export const action = async ({ params, request }: ActionFunctionArgs) => {
   invariant(params.userId, "Missing userId params");
   const formData = await request.formData();
-  const updates: any = Object.fromEntries(formData);
-  await updateUser(params.userId, updates);
-  return redirect(`/users/${params.userId}`);
+  const updatedUser = Object.fromEntries(formData) as UserType;
+
+  const errors = validateUser(updatedUser)
+  if (Object.keys(errors).length > 0) {
+    return errors;
+  } else {
+    await updateUser(params.userId, updatedUser);
+    return redirect(`/users/${params.userId}`);
+  }
 }
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {

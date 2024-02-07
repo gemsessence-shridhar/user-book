@@ -61,7 +61,7 @@ const UserForm = ({ user, formFor = "New", formErrors = {} }: UserProps) => {
           label="Contact Number"
           defaultValue={user.contact}
           minLength={10}
-          maxLength={12}
+          maxLength={13}
           errorMessage={formErrors?.contact}
           isInvalid={"contact" in formErrors}
         />
@@ -79,8 +79,6 @@ const UserForm = ({ user, formFor = "New", formErrors = {} }: UserProps) => {
           name="about"
           label="About"
           defaultValue={user.about}
-          errorMessage={formErrors?.about}
-          isInvalid={"about" in formErrors}
         />
 
         <span>
