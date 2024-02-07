@@ -1,77 +1,70 @@
-import { Form, useLoaderData } from "@remix-run/react";;
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { Button, Image } from "@nextui-org/react";
-import PencilIcon from "~/components/icons/PencilIcon";
-import invariant from "tiny-invariant";
+import {
+  Form,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "@remix-run/react";
+import { Button, Tab, Tabs } from "@nextui-org/react";
+import { OutletContextType } from "~/types";
+import { useEffect, useState } from "react";
 
-import { db } from "~/utils/db.server";
-import TelephoneIcon from "~/components/icons/TelephoneIcon";
-import EnvelopeIcon from "~/components/icons/EnvelopeIcon";
-import TrashIcon from "~/components/icons/TrashIcon";
-
-export const loader = async ({
-  params
-}: LoaderFunctionArgs) => {
-  invariant(params.userId, "Missing userId param");
-  const userResponse = await db.collection("users").doc(params.userId).get();
-  return userResponse.data();
+const TABS = {
+  bio: { key: "bio", name: "Bio" },
+  posts: { key: "posts", name: "Posts" }
 }
 
 const UserDetails = () => {
-  const user = useLoaderData<typeof loader>();
+  const [selectedTab, setSelectedTab] = useState<string>();
+  const { currentUser } = useOutletContext<OutletContextType>();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const params = useParams();
+  const USER_URL_REGEX = /^\/users\/[^/]+\/?$/;
+  const POSTS_URL_REGEX = /^\/users\/[^/]+\/posts\/?$/;
+
+  useEffect(() => {
+    if (USER_URL_REGEX.test(pathname)) {
+      setSelectedTab(TABS.bio.key);
+    } else if (POSTS_URL_REGEX.test(pathname)) {
+      setSelectedTab(TABS.posts.key);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (selectedTab === TABS.bio.key) {
+      return navigate(`/users/${params.userId}`);
+    } else if (selectedTab === TABS.posts.key) {
+      return navigate(`/users/${params.userId}/posts`);
+    }
+  }, [selectedTab]);
 
   return (
-    <div className="flex gap-4">
-      <Image
-        width={250}
-        alt={`${user.first_name} ${user.last_name}`}
-        src={user.avatar}
-      />
+    <>
+      <div className="flex items-end justify-between">
+        <Tabs
+          onSelectionChange={(key: any) => setSelectedTab(key)}
+          selectedKey={selectedTab}
+          variant="underlined"
+        >
+          <Tab key={TABS.bio.key} title={TABS.bio.name} />
+          <Tab key={TABS.posts.key} title={TABS.posts.name} />
+        </Tabs>
 
-      <section className="user-details-sections">
-        <div className="flex gap-1">
-          <p className="text-3xl font-bold mr-4">{`${user.first_name} ${user.last_name}`}</p>
-
-          <Form action="edit">
-            <Button isIconOnly color="primary" aria-label="Edit" type="submit" size="sm">
-              <PencilIcon />
-            </Button> 
+        {currentUser.id === params.userId && POSTS_URL_REGEX.test(pathname) && (
+          <Form action={`/users/${params.userId}/posts/new`} className="pr-4">
+            <Button color="primary" className="font-bold" type="submit" size="sm">
+              + New Post
+            </Button>
           </Form>
+        )}
+      </div>
 
-          <Form action="destroy" method="post">
-            <Button
-              isIconOnly
-              color="danger"
-              aria-label="Delete"
-              type="submit"
-              size="sm"
-              onClick={(event) => {
-                const response = confirm("Are you sure to delete this user?");
-                if (!response) {
-                  event.preventDefault();
-                }
-              }}
-            >
-              <TrashIcon />
-            </Button> 
-          </Form>
-        </div>
-        
-        <div className="flex gap-2">
-          <EnvelopeIcon />
-          <p className="text-sm">{user.email}</p>
-        </div>
-        
-        <div className="flex gap-2">
-          <TelephoneIcon />
-          <p className="text-xs">{user.contact}</p>
-        </div>
-
-        <div className="mt-4 py-4">
-          <p className="text-base">{user.about}</p>
-        </div>
-      </section>
-    </div>
+      <div className="p-4">
+        <Outlet context={{ currentUser }} />
+      </div>
+    </>
   )
 }
 

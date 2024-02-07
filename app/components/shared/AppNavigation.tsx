@@ -5,62 +5,80 @@ import {
   NavbarItem,
   Link,
   Button,
+  User,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
-import { Form } from "@remix-run/react";
+import { Form, NavLink } from "@remix-run/react";
+import { UserType } from "~/types";
+import { LogoutIcon } from "../icons";
 
 interface AppNavigationProps {
-  isAuthenticated: boolean;
+  currentUser?: UserType;
 }
 
-const AppNavigation = ({ isAuthenticated }: AppNavigationProps) => (
-  <Navbar isBordered className="top-navbar">
-    <NavbarBrand>
-      <p className="font-bold text-inherit">UserBook</p>
-    </NavbarBrand>
+const AppNavigation = ({ currentUser }: AppNavigationProps) => {
+  return (
+    <Navbar isBordered className="top-navbar">
+      <NavbarBrand>
+        <NavLink to="/">
+          <p className="font-bold text-inherit">Friends Book</p>
+        </NavLink>
+      </NavbarBrand>
 
-    {/* {isAuthenticated && (
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-    )} */}
-
-    <NavbarContent justify="end">
-      {isAuthenticated ? (
-        <NavbarItem>
-          <Form action="logout" method="post">
-            <Button type="submit" color="danger" size="sm" variant="flat">
-              Logout
-            </Button>
-          </Form>
-        </NavbarItem>
-      ) : (
+      {currentUser && (
         <>
-          {/* <NavbarItem className="hidden lg:flex">
-            <Link href="#">Login</Link>
-          </NavbarItem> */}
+          <NavbarContent justify="center">
+            <NavbarItem className="app-nav-item">
+              <NavLink to="/" end>Home</NavLink>
+            </NavbarItem>
+
+            <NavbarItem className="app-nav-item">
+              <NavLink to={`/users/${currentUser.id}`} end>Profile</NavLink>
+            </NavbarItem>
+
+            <NavbarItem className="app-nav-item">
+              <NavLink to={`/users/${currentUser.id}/posts`} end>Posts</NavLink>
+            </NavbarItem>
+          </NavbarContent>
+
+          <NavbarContent justify="end">
+            <Dropdown>
+              <DropdownTrigger>
+                <User
+                  name={`${currentUser.first_name} ${currentUser.last_name}`}
+                  avatarProps={{ src: currentUser.avatar }}
+                  classNames={{ base: "cursor-pointer", name: "font-bold text-amber-700" }}
+                />
+              </DropdownTrigger>
+
+              <DropdownMenu variant="shadow">
+                <DropdownItem key="logout" startContent={<LogoutIcon />}>
+                  <Form action="/logout" method="post">
+                    <button className="navbar-button w-full text-left" type="submit">
+                      Logout
+                    </button>
+                  </Form>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </NavbarContent>
+        </>
+      )}
+
+      {!currentUser && (
+        <NavbarContent justify="end">
           <NavbarItem>
-            <Button as={Link} color="primary" href="#" variant="flat">
+            <Button as={Link} color="primary" href="/signup" variant="flat">
               Sign Up
             </Button>
           </NavbarItem>
-        </>
+        </NavbarContent>
       )}
-    </NavbarContent>
-  </Navbar>
-);
+    </Navbar >
+  )
+};
 
 export default AppNavigation;

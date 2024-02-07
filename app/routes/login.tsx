@@ -1,5 +1,5 @@
 import { Button, Card, Input } from "@nextui-org/react";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import EmailIcon from "~/components/icons/EMailIcon";
 import PasswordIcon from "~/components/icons/PasswordIcon";

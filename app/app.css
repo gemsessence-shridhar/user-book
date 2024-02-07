@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -12,40 +13,122 @@ body {
   max-width: 100%;
 }
 
-.login-container, .app-content {
+.app-nav-item a.active {
+  color: rgb(180 83 9);
+  font-weight: bold;
+}
+
+.login-container,
+.app-content {
   /* full height - (Navbar height + border) */
   height: calc(100% - (4rem + 1px));
 }
 
 .user-list {
   width: 20%;
-  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
 }
 
-.user-list a {
+.user-list .users-side-nav {
+  /* full height - (Navbar height + border) */
+  max-height: calc(100% - (4rem + 1px));
+  overflow-y: auto;
+}
+
+.users-side-nav a {
   width: fit-content;
   transition: transform 0.3s ease-in-out;
 }
 
-.user-list a.active {
+.users-side-nav a.active {
   font-weight: bold;
   transform: scale(1.1);
 }
 
-.user-list a.pending {
+.users-side-nav a.pending {
   animation: progress 2s infinite ease-in-out;
   animation-delay: 200ms;
 }
 
-.user-list a:hover {
+.users-side-nav a:hover {
   transform: scale(1.1);
+}
+
+.user-form>* {
+  margin-bottom: 1rem;
 }
 
 #outlet-wrapper {
   width: 80%;
-  padding: 1rem;
+  overflow-y: auto;
 }
 
 .user-details-sections {
   width: calc(100% - 250px);
+}
+
+.post-card {
+  max-width: 35rem;
+}
+
+.post-action-form {
+  width: 100%;
+}
+
+.post-action-btn {
+  min-width: 6rem;
+  background-color: #f0f0f0;
+  border-radius: 3rem;
+  padding: 0.35rem 1.5rem;
+}
+
+/* Comments CSS */
+.actions-on-comment:hover {
+  background-color: tan;
+}
+
+.actions-on-comment form {
+  display: none;
+}
+
+.actions-on-comment:hover form {
+  display: inline-flex;
+}
+
+.actions-on-comment button {
+  border: none;
+  width: fit-content;
+  min-width: fit-content;
+  height: fit-content;
+  background: transparent;
+  padding: 0;
+}
+
+.actions-on-comment button:hover {
+  transform: scale(1.8);
+}
+
+
+/* Custom Scroll Bar CSS */
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 255, 255, 0.3);
 }
